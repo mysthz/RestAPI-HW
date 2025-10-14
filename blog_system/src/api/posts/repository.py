@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.api.posts.models import Post
-from src.api.posts.schemas import PostCreateRequest, PostUpdateRequest
-from src.db.deps import SessionDepends
+from blog_system.src.api.posts.models import Post
+from blog_system.src.api.posts.schemas import PostCreateRequest, PostUpdateRequest
+from blog_system.src.db.deps import SessionDepends
 
 
 class PostRepository:

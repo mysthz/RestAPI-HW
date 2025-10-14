@@ -1,19 +1,20 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, HTTPException, status
 
-from src.api.posts.repository import PostRepositoryDepends
-from src.api.posts.schemas import PostResponse, PostCreateRequest, PostUpdateRequest
-from src.api.users.repository import UserRepositoryDepends
+from blog_system.src.api.posts.models import Post
+from blog_system.src.api.posts.repository import PostRepositoryDepends
+from blog_system.src.api.posts.schemas import PostCreateRequest, PostResponse, PostUpdateRequest
+from blog_system.src.api.users.repository import UserRepositoryDepends
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 
-@router.get("")
-async def get_posts(post_repository: PostRepositoryDepends) -> list[PostResponse]:
+@router.get("", response_model=list[PostResponse])
+async def get_posts(post_repository: PostRepositoryDepends) -> list[Post]:
     return post_repository.get_posts()
 
 
-@router.get("/{post_id}")
-async def get_post(post_id: int, post_repository: PostRepositoryDepends) -> PostResponse:
+@router.get("/{post_id}", response_model=PostResponse)
+async def get_post(post_id: int, post_repository: PostRepositoryDepends) -> Post:
     post = post_repository.get_post_by_id(post_id)
 
     if not post:
@@ -22,9 +23,10 @@ async def get_post(post_id: int, post_repository: PostRepositoryDepends) -> Post
     return post
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
-async def create_post(args: PostCreateRequest, user_repository: UserRepositoryDepends,
-                      post_repository: PostRepositoryDepends) -> PostResponse:
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
+async def create_post(
+    args: PostCreateRequest, user_repository: UserRepositoryDepends, post_repository: PostRepositoryDepends
+) -> Post:
     user = user_repository.get_user_by_id(args.authorId)
 
     if not user:
@@ -33,8 +35,8 @@ async def create_post(args: PostCreateRequest, user_repository: UserRepositoryDe
     return post_repository.create_post(args)
 
 
-@router.put("/{post_id}")
-async def update_post(post_id: int, args: PostUpdateRequest, post_repository: PostRepositoryDepends) -> PostResponse:
+@router.put("/{post_id}", response_model=PostResponse)
+async def update_post(post_id: int, args: PostUpdateRequest, post_repository: PostRepositoryDepends) -> Post:
     post = post_repository.get_post_by_id(post_id)
 
     if not post:

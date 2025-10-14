@@ -9,11 +9,20 @@ cd RestAPI-HW
 ```
 
 ```bash
-pip install -r requirements.txt
+pip install poetry==2.2.1
 ```
 
 ```bash
-uvicorn scr.app:app --reload
+poetry install
+```
+
+```bash
+uvicorn blog_system.src.app:app --reload
+```
+
+Установка хуков:
+```bash
+pre-commit install
 ```
 
 Тестирование
