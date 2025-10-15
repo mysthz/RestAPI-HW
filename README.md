@@ -37,3 +37,8 @@ pre-commit install
 <img src="img/put_post.png">
 <img src="img/delete_post_validation.png">
 
+
+ER-диаграмма:
+
+<img src="img/ER-diagram.png">
+
