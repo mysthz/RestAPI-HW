@@ -1,0 +1,18 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check
+        name: check
+        entry: ruff check --fix
+        language: system
+        pass_filenames: false
+      - id: format
+        name: format
+        entry: ruff format
+        language: system
+        pass_filenames: false
+      - id: mypy
+        name: mypy
+        entry: mypy blog_system
+        language: system
+        pass_filenames: false

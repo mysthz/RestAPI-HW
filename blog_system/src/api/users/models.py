@@ -2,10 +2,11 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.db.models import Base
+from blog_system.src.db.models import Base
 
 if TYPE_CHECKING:
-    from src.api.posts.models import Post
+    from blog_system.src.api.posts.models import Post
+
 
 class User(Base):
     __tablename__ = "users"

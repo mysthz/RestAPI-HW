@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Response, status
 
-from src.api import router
-from src.db import ENGINE
-from src.db.models import Base
+from blog_system.src.api import router
+from blog_system.src.db import ENGINE
+from blog_system.src.db.models import Base
 
 app = FastAPI(
     title="Blog API",
