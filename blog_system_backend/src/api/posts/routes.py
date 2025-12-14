@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, status
 
-from blog_system.src.api.posts.models import Post
-from blog_system.src.api.posts.repository import PostRepositoryDepends
-from blog_system.src.api.posts.schemas import PostCreateRequest, PostResponse, PostUpdateRequest
-from blog_system.src.api.users.repository import UserRepositoryDepends
+from blog_system_backend.src.api.posts.models import Post
+from blog_system_backend.src.api.posts.repository import PostRepositoryDepends
+from blog_system_backend.src.api.posts.schemas import PostCreateRequest, PostResponse, PostUpdateRequest
+from blog_system_backend.src.api.users.repository import UserRepositoryDepends
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 

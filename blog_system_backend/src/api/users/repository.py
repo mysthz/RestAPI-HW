@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from blog_system.src.api.users.models import User
-from blog_system.src.api.users.schemas import UserRequest
-from blog_system.src.db.deps import SessionDepends
-from blog_system.src.security import get_password_hash
+from blog_system_backend.src.api.users.models import User
+from blog_system_backend.src.api.users.schemas import UserRequest
+from blog_system_backend.src.db.deps import SessionDepends
+from blog_system_backend.src.security import get_password_hash
 
 
 class UserRepository:

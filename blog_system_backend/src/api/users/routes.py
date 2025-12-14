@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 
-from blog_system.src.api.users.models import User
-from blog_system.src.api.users.repository import UserRepositoryDepends
-from blog_system.src.api.users.schemas import UserRequest, UserResponse
+from blog_system_backend.src.api.users.models import User
+from blog_system_backend.src.api.users.repository import UserRepositoryDepends
+from blog_system_backend.src.api.users.schemas import UserRequest, UserResponse
 
 router = APIRouter(prefix="/users", tags=["users"])
 

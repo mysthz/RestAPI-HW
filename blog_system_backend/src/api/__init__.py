@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from blog_system.src.api import posts, users
+from blog_system_backend.src.api import posts, users
 
 router = APIRouter(prefix="/api")
 
