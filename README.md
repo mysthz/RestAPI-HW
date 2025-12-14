@@ -40,7 +40,7 @@ poetry install
 ```
 
 ```bash
-uvicorn blog_system_backend.src.app:app --reload
+docker compose up -d --build
 ```
 
 Установка хуков:
