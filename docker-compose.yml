@@ -1,0 +1,22 @@
+name: blog-system
+
+services:
+  backend-dev:
+    build:
+      context: .
+      dockerfile: ./blog_system_backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    volumes:
+      - sqlite_data:/app/data
+    networks:
+      - blog-system-network
+
+networks:
+  blog-system-network:
+    name: blog-system
+    driver: bridge
+
+volumes:
+  sqlite_data:
