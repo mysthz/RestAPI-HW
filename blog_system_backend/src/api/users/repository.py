@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.schemas import UserRequest
 from blog_system_backend.src.db.deps import SessionDepends
@@ -25,11 +26,12 @@ class UserRepository:
         query = self.session.query(User)
         return query.all()
 
-    def create_user(self, args: UserRequest) -> User:
+    def create_user(self, args: UserRequest, is_admin: bool = False) -> User:
         user = User(
             login=args.login,
             email=args.email,
             password=get_password_hash(args.password),
+            role=UserRole.admin if is_admin else UserRole.user,
         )
 
         self.session.add(user)

@@ -17,11 +17,18 @@ dependencies = [
     "pre-commit (>=4.3.0,<5.0.0)",
     "types-passlib (>=1.7.7.20250602,<2.0.0.0)",
     "alembic (>=1.17.2,<2.0.0)",
+    "pyjwt (==2.10.1)",
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "typer (>=0.20.0,<0.21.0)",
 ]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+cli = "blog_system_backend.cli.app:app"
 
 
 [tool.mypy]
