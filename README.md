@@ -17,12 +17,17 @@ poetry install
 ```
 
 ```bash
-uvicorn blog_system.src.app:app --reload
+uvicorn blog_system_backend.src.app:app --reload
 ```
 
 Установка хуков:
 ```bash
 pre-commit install
+```
+
+Создание миграции
+```bash
+poetry run alembic revision --autogenerate -m "message"
 ```
 
 Тестирование
