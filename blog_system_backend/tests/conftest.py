@@ -1,3 +1,14 @@
+__all__ = [
+    "generate_password_hash",
+    "generate_password",
+    "generate_user",
+    "generate_login",
+    "user_client",
+    "user_repository",
+    "user",
+    "UserClient",
+]
+
 from typing import Iterator
 
 import pytest
@@ -8,6 +19,14 @@ from sqlalchemy.orm import Session
 from blog_system_backend.src.app import app
 from blog_system_backend.src.db.deps import get_session
 from blog_system_backend.src.db.models import Base
+from blog_system_backend.tests.utils.users.client import UserClient
+from blog_system_backend.tests.utils.users.fixtures import user, user_client, user_repository
+from blog_system_backend.tests.utils.users.generator import (
+    generate_login,
+    generate_password,
+    generate_password_hash,
+    generate_user,
+)
 
 ENGINE = create_engine("sqlite:///./data/test_database.db")
 
