@@ -6,18 +6,29 @@ from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.repository import UserRepositoryDepends
-from blog_system_backend.src.api.users.schemas import UserRequest, UserResponse
+from blog_system_backend.src.api.users.schemas import UserRequest, UserResponse, UsersPaginationResponse
+from blog_system_backend.src.pagination import PaginationResponse, PaginationSearchParamsDepends
 from blog_system_backend.src.settings import settings
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
-@router.get("", response_model=list[UserResponse])
-async def get_users(user_repository: UserRepositoryDepends, current_user: CurrentUserDepends) -> list[User]:
+@router.get("", response_model=UsersPaginationResponse)
+async def get_users(
+    search_params: PaginationSearchParamsDepends,
+    user_repository: UserRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> UsersPaginationResponse:
     if current_user.role != UserRole.admin:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Доступно только администраторам")
-    return user_repository.get_users()
+
+    count = user_repository.count_users(search_params)
+    users = user_repository.get_users(search_params)
+
+    pagination = PaginationResponse.from_search_params(search_params, total_items=count)
+
+    return UsersPaginationResponse(users=[UserResponse.from_orm(user) for user in users], pagination=pagination)
 
 
 @lru_cache(maxsize=settings.lru_cache_size)

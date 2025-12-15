@@ -16,5 +16,7 @@ class Settings(BaseSettings):
     jwt_expire_minutes: int
     jwt_secret: str
 
+    pagination_search_params_max_limit: int = 100
+
 
 settings = Settings()  # type: ignore

@@ -6,6 +6,7 @@ from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.schemas import UserRequest
 from blog_system_backend.src.db.deps import SessionDepends
+from blog_system_backend.src.pagination import PaginationSearchParams
 from blog_system_backend.src.security import get_password_hash
 
 
@@ -22,9 +23,21 @@ class UserRepository:
     def get_user_by_email(self, email: str) -> User | None:
         return self.session.query(User).filter(User.email == email).first()
 
-    def get_users(self) -> list[User]:
+    def get_users(self, search_params: PaginationSearchParams | None = None) -> list[User]:
+        search_params = search_params or PaginationSearchParams.model_construct()
+
         query = self.session.query(User)
+        query = query.filter(User.login.icontains(search_params.q)) if search_params.q else query
+        query = query.order_by(User.login).offset(search_params.offset).limit(search_params.limit)
+
         return query.all()
+
+    def count_users(self, search_params: PaginationSearchParams | None = None) -> int:
+        search_params = search_params or PaginationSearchParams.model_construct()
+        query = self.session.query(User)
+        query = query.filter(User.login.icontains(search_params.q)) if search_params.q else query
+
+        return query.count()
 
     def create_user(self, args: UserRequest, is_admin: bool = False) -> User:
         user = User(
