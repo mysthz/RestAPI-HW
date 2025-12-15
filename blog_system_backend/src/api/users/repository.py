@@ -4,7 +4,7 @@ from fastapi import Depends
 
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
-from blog_system_backend.src.api.users.schemas import UserRequest
+from blog_system_backend.src.api.users.schemas import UserRequest, UserUpdateRequest
 from blog_system_backend.src.db.deps import SessionDepends
 from blog_system_backend.src.pagination import PaginationSearchParams
 from blog_system_backend.src.security import get_password_hash
@@ -53,7 +53,7 @@ class UserRepository:
 
         return user
 
-    def update_user(self, user: User, args: UserRequest) -> None:
+    def update_user(self, user: User, args: UserUpdateRequest) -> None:
         user.update(args.dict())
 
         self.session.commit()

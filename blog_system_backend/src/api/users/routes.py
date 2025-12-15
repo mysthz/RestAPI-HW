@@ -6,7 +6,11 @@ from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.repository import UserRepositoryDepends
-from blog_system_backend.src.api.users.schemas import UserRequest, UserResponse, UsersPaginationResponse
+from blog_system_backend.src.api.users.schemas import (
+    UserResponse,
+    UsersPaginationResponse,
+    UserUpdateRequest,
+)
 from blog_system_backend.src.pagination import PaginationResponse, PaginationSearchParamsDepends
 from blog_system_backend.src.settings import settings
 
@@ -44,7 +48,7 @@ async def get_user(user_id: int, user_repository: UserRepositoryDepends, current
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(
-    user_id: int, args: UserRequest, user_repository: UserRepositoryDepends, current_user: CurrentUserDepends
+    user_id: int, args: UserUpdateRequest, user_repository: UserRepositoryDepends, current_user: CurrentUserDepends
 ) -> User:
     request_user = user_repository.get_user_by_id(user_id)
 

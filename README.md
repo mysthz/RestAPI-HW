@@ -65,6 +65,24 @@ poetry run cli admin create \
 
 Тестирование
 
+Unit-тесты
+
+```bash
+poetry run pytest blog_system_backend/tests/unit/ --cov=blog_system_backend/src/api
+```
+
+Покрытие: 69%
+
+Integration-тесты
+
+```bash
+poetry run pytest blog_system_backend/tests/integration/ --cov=blog_system_backend/src/api
+```
+
+Покрытие: TODO
+
+Swagger
+
 <img src="img/post_user.png">
 <img src="img/get_user.png">
 <img src="img/get_user_error.png">
