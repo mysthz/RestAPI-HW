@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from fastapi import APIRouter, HTTPException, status
 
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
@@ -5,10 +7,12 @@ from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.repository import UserRepositoryDepends
 from blog_system_backend.src.api.users.schemas import UserRequest, UserResponse
+from blog_system_backend.src.settings import settings
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
+@lru_cache(maxsize=settings.lru_cache_size)
 @router.get("", response_model=list[UserResponse])
 async def get_users(user_repository: UserRepositoryDepends, current_user: CurrentUserDepends) -> list[User]:
     if current_user.role != UserRole.admin:
@@ -16,6 +20,7 @@ async def get_users(user_repository: UserRepositoryDepends, current_user: Curren
     return user_repository.get_users()
 
 
+@lru_cache(maxsize=settings.lru_cache_size)
 @router.get("/{user_id}", response_model=UserResponse)
 async def get_user(user_id: int, user_repository: UserRepositoryDepends, current_user: CurrentUserDepends) -> User:
     user = user_repository.get_user_by_id(user_id)

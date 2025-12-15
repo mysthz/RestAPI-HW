@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     )
 
     token_url: str = "api/auth/login"
+    lru_cache_size: int = 128
 
     jwt_algorithm: str
     jwt_expire_minutes: int

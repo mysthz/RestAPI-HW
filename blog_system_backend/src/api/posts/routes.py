@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from fastapi import APIRouter, HTTPException, status
 
 from blog_system_backend.src.api.posts.models import Post
@@ -6,15 +8,18 @@ from blog_system_backend.src.api.posts.schemas import PostCreateRequest, PostRes
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.repository import UserRepositoryDepends
+from blog_system_backend.src.settings import settings
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 
+@lru_cache(maxsize=settings.lru_cache_size)
 @router.get("", response_model=list[PostResponse])
 async def get_posts(post_repository: PostRepositoryDepends, current_user: CurrentUserDepends) -> list[Post]:
     return post_repository.get_posts()
 
 
+@lru_cache(maxsize=settings.lru_cache_size)
 @router.get("/{post_id}", response_model=PostResponse)
 async def get_post(post_id: int, post_repository: PostRepositoryDepends, current_user: CurrentUserDepends) -> Post:
     post = post_repository.get_post_by_id(post_id)
