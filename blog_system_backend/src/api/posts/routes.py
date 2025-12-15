@@ -4,19 +4,35 @@ from fastapi import APIRouter, HTTPException, status
 
 from blog_system_backend.src.api.posts.models import Post
 from blog_system_backend.src.api.posts.repository import PostRepositoryDepends
-from blog_system_backend.src.api.posts.schemas import PostCreateRequest, PostResponse, PostUpdateRequest
+from blog_system_backend.src.api.posts.schemas import (
+    PostCreateRequest,
+    PostResponse,
+    PostsPaginationResponse,
+    PostUpdateRequest,
+)
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.repository import UserRepositoryDepends
+from blog_system_backend.src.pagination import PaginationResponse, PaginationSearchParamsDepends
 from blog_system_backend.src.settings import settings
 
 router = APIRouter(prefix="/posts", tags=["posts"])
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
-@router.get("", response_model=list[PostResponse])
-async def get_posts(post_repository: PostRepositoryDepends, current_user: CurrentUserDepends) -> list[Post]:
-    return post_repository.get_posts()
+@router.get("", response_model=PostsPaginationResponse)
+async def get_posts(
+    search_params: PaginationSearchParamsDepends,
+    post_repository: PostRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> PostsPaginationResponse:
+    posts = post_repository.get_posts(search_params)
+    count = post_repository.count_posts(search_params)
+
+    return PostsPaginationResponse(
+        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        posts=[PostResponse.from_orm(post) for post in posts],
+    )
 
 
 @lru_cache(maxsize=settings.lru_cache_size)

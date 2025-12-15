@@ -28,7 +28,7 @@ async def get_users(
 
     pagination = PaginationResponse.from_search_params(search_params, total_items=count)
 
-    return UsersPaginationResponse(users=[UserResponse.from_orm(user) for user in users], pagination=pagination)
+    return UsersPaginationResponse(pagination=pagination, users=[UserResponse.from_orm(user) for user in users])
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
