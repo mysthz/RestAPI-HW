@@ -53,6 +53,16 @@ pre-commit install
 poetry run alembic revision --autogenerate -m "message"
 ```
 
+Создание аккаунта админа с помощью cli
+```bash
+docker exec -it blog-system-backend-1 sh
+
+poetry run cli admin create \
+    --login "admin" \
+    --email "admin@admin.com" \
+    --password "admin123"
+```
+
 Тестирование
 
 <img src="img/post_user.png">

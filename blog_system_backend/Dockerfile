@@ -14,12 +14,12 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock* ./
 
-RUN poetry install --no-root --no-interaction --no-ansi
-
 COPY . .
+
+RUN poetry install --no-interaction --no-ansi
 
 EXPOSE 8000
 
 RUN poetry run alembic upgrade head
 
-CMD ["uvicorn", "blog_system_backend.src.app:app", "--host", "0.0.0.0", "--port", "8000", "--forwarded-allow-ips=\"*\"", "--proxy-headers"]
+CMD ["poetry", "run", "uvicorn", "blog_system_backend.src.app:app", "--host", "0.0.0.0", "--port", "8000", "--forwarded-allow-ips=\"*\"", "--proxy-headers"]

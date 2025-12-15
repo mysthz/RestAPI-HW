@@ -1,7 +1,7 @@
 name: blog-system
 
 services:
-  backend-dev:
+  backend:
     build:
       context: .
       dockerfile: ./blog_system_backend/Dockerfile
