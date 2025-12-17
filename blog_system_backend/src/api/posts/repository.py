@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
+from sqlalchemy import or_
 
 from blog_system_backend.src.api.posts.models import Post
 from blog_system_backend.src.api.posts.schemas import PostCreateRequest, PostUpdateRequest
@@ -19,7 +20,11 @@ class PostRepository:
         search_params = search_params or PaginationSearchParams.model_construct()
 
         query = self.session.query(Post)
-        query = query.filter(Post.title.icontains(search_params.q)) if search_params.q else query
+        query = (
+            query.filter(or_(Post.title.icontains(search_params.q), Post.content.icontains(search_params.q)))
+            if search_params.q
+            else query
+        )
         query = query.order_by(Post.title).offset(search_params.offset).limit(search_params.limit)
 
         return query.all()
@@ -27,7 +32,11 @@ class PostRepository:
     def count_posts(self, search_params: PaginationSearchParams | None = None) -> int:
         search_params = search_params or PaginationSearchParams.model_construct()
         query = self.session.query(Post)
-        query = query.filter(Post.title.icontains(search_params.q)) if search_params.q else query
+        query = (
+            query.filter(or_(Post.title.icontains(search_params.q), Post.content.icontains(search_params.q)))
+            if search_params.q
+            else query
+        )
 
         return query.count()
 
