@@ -27,15 +27,23 @@ async def get_users(
     user_repository: UserRepositoryDepends,
     current_user: CurrentUserDepends,
 ) -> UsersPaginationResponse:
-    if current_user.role != UserRole.admin:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "Доступно только администраторам")
-
     count = user_repository.count_users(search_params)
     users = user_repository.get_users(search_params)
 
     pagination = PaginationResponse.from_search_params(search_params, total_items=count)
 
     return UsersPaginationResponse(pagination=pagination, users=[UserResponse.from_orm(user) for user in users])
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_current_user(
+    current_user: CurrentUserDepends,
+) -> User:
+    return current_user
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
