@@ -4,6 +4,7 @@ from fastapi import Depends
 
 from blog_system_backend.src.api.users.subscribes.models import Subscribe
 from blog_system_backend.src.db.deps import SessionDepends
+from blog_system_backend.src.pagination import PaginationSearchParams
 
 
 class SubscribeRepository:
@@ -30,6 +31,22 @@ class SubscribeRepository:
     def delete(self, s: Subscribe) -> None:
         self.session.delete(s)
         self.session.commit()
+
+    def def_followers(
+        self, author_id: int, search_params: PaginationSearchParams | None = None
+    ) -> tuple[list[Subscribe], int]:
+        search_params = search_params or PaginationSearchParams.model_construct()
+        query = self.session.query(Subscribe).filter(Subscribe.authorId == author_id)
+
+        return query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
+
+    def def_subscriptions(
+        self, user_id: int, search_params: PaginationSearchParams | None = None
+    ) -> tuple[list[Subscribe], int]:
+        search_params = search_params or PaginationSearchParams.model_construct()
+        query = self.session.query(Subscribe).filter(Subscribe.subscriberId == user_id)
+
+        return query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
 
 
 SubscribeRepositoryDepends = Annotated[SubscribeRepository, Depends()]

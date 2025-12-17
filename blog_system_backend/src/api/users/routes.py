@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from fastapi import APIRouter, HTTPException, status
 
+from blog_system_backend.src.api.posts.schemas import PostResponse, PostsPaginationResponse
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.api.users.models import User
@@ -11,6 +12,8 @@ from blog_system_backend.src.api.users.schemas import (
     UsersPaginationResponse,
     UserUpdateRequest,
 )
+from blog_system_backend.src.api.users.subscribes.repository import SubscribeRepositoryDepends
+from blog_system_backend.src.api.users.subscribes.schemas import SubscribePaginationResponse, SubscribeResponse
 from blog_system_backend.src.pagination import PaginationResponse, PaginationSearchParamsDepends
 from blog_system_backend.src.settings import settings
 
@@ -81,3 +84,71 @@ async def delete_user(user_id: int, user_repository: UserRepositoryDepends, curr
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Недостаточно прав на удаление пользователя")
 
     user_repository.delete_user(user)
+
+
+@lru_cache(maxsize=settings.lru_cache_size)
+@router.get("/{user_id}/subscriptions")
+async def get_user_subscriptions(
+    user_id: int,
+    search_params: PaginationSearchParamsDepends,
+    user_repository: UserRepositoryDepends,
+    subscribe_repository: SubscribeRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> SubscribePaginationResponse:
+    user = user_repository.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
+
+    subscriptions, count = subscribe_repository.def_followers(user_id, search_params)
+
+    return SubscribePaginationResponse(
+        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        subscribes=[SubscribeResponse.from_orm(subscription) for subscription in subscriptions],
+    )
+
+
+@lru_cache(maxsize=settings.lru_cache_size)
+@router.get("/{user_id}/followers")
+async def get_user_followers(
+    user_id: int,
+    search_params: PaginationSearchParamsDepends,
+    user_repository: UserRepositoryDepends,
+    subscribe_repository: SubscribeRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> SubscribePaginationResponse:
+    user = user_repository.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
+
+    followers, count = subscribe_repository.def_followers(user_id, search_params)
+
+    return SubscribePaginationResponse(
+        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        subscribes=[SubscribeResponse.from_orm(follower) for follower in followers],
+    )
+
+
+@lru_cache(maxsize=settings.lru_cache_size)
+@router.get("/{user_id}/posts", response_model=PostsPaginationResponse)
+async def get_user_posts(
+    user_id: int,
+    search_params: PaginationSearchParamsDepends,
+    user_repository: UserRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> PostsPaginationResponse:
+    user = user_repository.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
+
+    count = len(user.posts)
+
+    return PostsPaginationResponse(
+        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        posts=[
+            PostResponse.from_orm(post)
+            for post in user.posts[search_params.offset : search_params.limit + search_params.offset]
+        ],
+    )

@@ -71,7 +71,7 @@ Unit-тесты
 poetry run pytest blog_system_backend/tests/unit/ --cov=blog_system_backend/src/api
 ```
 
-Покрытие: 69%
+Покрытие: 65%
 
 Integration-тесты
 
@@ -79,7 +79,7 @@ Integration-тесты
 poetry run pytest blog_system_backend/tests/integration/ --cov=blog_system_backend/src/api
 ```
 
-Покрытие: 77%
+Покрытие: 69%
 
 Swagger
 

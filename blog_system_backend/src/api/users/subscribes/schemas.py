@@ -3,6 +3,7 @@ from datetime import datetime
 from pydantic import BaseModel, PositiveInt
 
 from blog_system_backend.src.api.users.subscribes.models import Subscribe
+from blog_system_backend.src.pagination import PaginationResponse
 
 
 class SubscribeResponse(BaseModel):
@@ -21,3 +22,8 @@ class SubscribeResponse(BaseModel):
             createdAt=s.createdAt,
             updatedAt=s.updatedAt,
         )
+
+
+class SubscribePaginationResponse(BaseModel):
+    pagination: PaginationResponse
+    subscribes: list[SubscribeResponse]
