@@ -26,7 +26,7 @@ class PostRepository:
             if search_params.q
             else query
         )
-        query = query.order_by(Post.createdAt).offset(search_params.offset).limit(search_params.limit)
+        query = query.order_by(Post.createdAt.desc()).offset(search_params.offset).limit(search_params.limit)
 
         return query.all()
 
