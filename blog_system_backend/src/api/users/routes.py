@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from fastapi import APIRouter, HTTPException, status
 
+from blog_system_backend.src.api.posts.saved_posts.repository import SavedPostRepositoryDepends
 from blog_system_backend.src.api.posts.schemas import PostResponse, PostsPaginationResponse
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
@@ -135,6 +136,28 @@ async def get_user_followers(
     return SubscribePaginationResponse(
         pagination=PaginationResponse.from_search_params(search_params, total_items=count),
         subscribes=[SubscribeResponse.from_orm(follower) for follower in followers],
+    )
+
+
+@lru_cache(maxsize=settings.lru_cache_size)
+@router.get("/{user_id}/saved-posts", response_model=PostsPaginationResponse)
+async def get_user_saved_posts(
+    user_id: int,
+    search_params: PaginationSearchParamsDepends,
+    user_repository: UserRepositoryDepends,
+    saved_posts_repository: SavedPostRepositoryDepends,
+    current_user: CurrentUserDepends,
+) -> PostsPaginationResponse:
+    user = user_repository.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
+
+    posts, count = saved_posts_repository.get_by_user(user_id, search_params)
+
+    return PostsPaginationResponse(
+        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        posts=[PostResponse.from_orm(post.post) for post in posts],
     )
 
 
