@@ -6,6 +6,7 @@ from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.db.models import Base
 
 if TYPE_CHECKING:
+    from blog_system_backend.src.api.posts.comments.models import Comment
     from blog_system_backend.src.api.posts.models import Post
 
 
@@ -18,3 +19,4 @@ class User(Base):
     role: Mapped[UserRole] = mapped_column(default=UserRole.user)
 
     posts: Mapped[list["Post"]] = relationship("Post", back_populates="author")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="author")

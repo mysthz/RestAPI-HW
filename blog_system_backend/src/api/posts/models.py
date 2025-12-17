@@ -7,6 +7,7 @@ from blog_system_backend.src.db.models import Base
 
 if TYPE_CHECKING:
     from blog_system_backend.src.api.categories.models import Category
+    from blog_system_backend.src.api.posts.comments.models import Comment
     from blog_system_backend.src.api.users.models import User
 
 
@@ -23,3 +24,4 @@ class Post(Base):
         secondary="post_to_category",
         back_populates="posts",
     )
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="post")

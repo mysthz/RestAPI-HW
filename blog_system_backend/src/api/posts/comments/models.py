@@ -19,4 +19,4 @@ class Comment(Base):
     content: Mapped[str] = mapped_column(nullable=False)
 
     post: Mapped["Post"] = relationship("Post", back_populates="comments")
-    author: Mapped["User"] = relationship("User", back_populates="posts")
+    author: Mapped["User"] = relationship("User", back_populates="comments")

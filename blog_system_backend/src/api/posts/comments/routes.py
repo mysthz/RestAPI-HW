@@ -14,7 +14,7 @@ from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
 from blog_system_backend.src.settings import settings
 
-router = APIRouter(prefix="/comments", tags=["comments"])
+router = APIRouter(prefix="/comments", include_in_schema=False)
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
