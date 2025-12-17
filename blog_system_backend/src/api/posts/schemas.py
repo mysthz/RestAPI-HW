@@ -11,11 +11,13 @@ class PostCreateRequest(BaseModel):
     authorId: PositiveInt
     title: Annotated[str, constr(max_length=500)]
     content: Annotated[str, constr(max_length=100000)]
+    categoryIds: list[PositiveInt] = []
 
 
 class PostUpdateRequest(BaseModel):
     title: Annotated[str, constr(max_length=500)]
     content: Annotated[str, constr(max_length=100000)]
+    categoryIds: list[PositiveInt] = []
 
 
 class PostResponse(BaseModel):

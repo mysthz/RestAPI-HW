@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import or_
 
+from blog_system_backend.src.api.categories.models import Category
 from blog_system_backend.src.api.posts.models import Post
 from blog_system_backend.src.api.posts.schemas import PostCreateRequest, PostUpdateRequest
 from blog_system_backend.src.db.deps import SessionDepends
@@ -47,6 +48,10 @@ class PostRepository:
             content=args.content,
         )
 
+        if args.categoryIds:
+            categories = self.session.query(Category).filter(Category.id.in_(args.categoryIds)).all()
+            post.categories = categories
+
         self.session.add(post)
         self.session.commit()
         self.session.refresh(post)
@@ -54,7 +59,10 @@ class PostRepository:
         return post
 
     def update_post(self, post: Post, args: PostUpdateRequest) -> None:
-        post.update(args.dict())
+        post.update({k: v for k, v in args.dict().items() if k != "categoryIds"})
+        if args.categoryIds is not None:
+            categories = self.session.query(Category).filter(Category.id.in_(args.categoryIds)).all()
+            post.categories = categories
 
         self.session.commit()
         self.session.refresh(post)
