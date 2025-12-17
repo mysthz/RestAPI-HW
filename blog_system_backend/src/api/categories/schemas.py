@@ -3,6 +3,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, PositiveInt, constr
 
+from blog_system_backend.src.api.categories.models import Category
 from blog_system_backend.src.pagination import PaginationResponse
 
 
@@ -21,7 +22,7 @@ class CategoryResponse(BaseModel):
     updatedAt: datetime
 
     @classmethod
-    def from_orm(cls, category):
+    def from_orm(cls, category: Category) -> "CategoryResponse":
         return cls(
             id=category.id,
             title=category.title,

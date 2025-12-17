@@ -8,7 +8,6 @@ from blog_system_backend.src.pagination import PaginationResponse
 
 
 class PostCreateRequest(BaseModel):
-    authorId: PositiveInt
     title: Annotated[str, constr(max_length=500)]
     content: Annotated[str, constr(max_length=100000)]
     categoryIds: list[PositiveInt] = []
@@ -25,6 +24,7 @@ class PostResponse(BaseModel):
     authorId: PositiveInt
     title: Annotated[str, constr(max_length=500)]
     content: Annotated[str, constr(max_length=100000)]
+    categories: list[str] = []
     createdAt: datetime
     updatedAt: datetime
 
@@ -35,6 +35,7 @@ class PostResponse(BaseModel):
             authorId=post.authorId,
             title=post.title,
             content=post.content,
+            categories=[cat.title for cat in post.categories],
             createdAt=post.createdAt,
             updatedAt=post.updatedAt,
         )

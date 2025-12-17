@@ -12,7 +12,6 @@ from blog_system_backend.src.api.posts.schemas import (
 )
 from blog_system_backend.src.api.users.deps import CurrentUserDepends
 from blog_system_backend.src.api.users.enums import UserRole
-from blog_system_backend.src.api.users.repository import UserRepositoryDepends
 from blog_system_backend.src.pagination import PaginationResponse, PaginationSearchParamsDepends
 from blog_system_backend.src.settings import settings
 
@@ -49,16 +48,10 @@ async def get_post(post_id: int, post_repository: PostRepositoryDepends, current
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
 async def create_post(
     args: PostCreateRequest,
-    user_repository: UserRepositoryDepends,
     post_repository: PostRepositoryDepends,
     current_user: CurrentUserDepends,
 ) -> Post:
-    user = user_repository.get_user_by_id(args.authorId)
-
-    if not user:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {args.authorId} не найден")
-
-    return post_repository.create_post(args)
+    return post_repository.create_post(args, current_user.id)
 
 
 @router.put("/{post_id}", response_model=PostResponse)

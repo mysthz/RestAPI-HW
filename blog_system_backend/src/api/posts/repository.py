@@ -41,9 +41,9 @@ class PostRepository:
 
         return query.count()
 
-    def create_post(self, args: PostCreateRequest) -> Post:
+    def create_post(self, args: PostCreateRequest, author_id: int) -> Post:
         post = Post(
-            authorId=args.authorId,
+            authorId=author_id,
             title=args.title,
             content=args.content,
         )

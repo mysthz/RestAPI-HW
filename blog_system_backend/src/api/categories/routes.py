@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from fastapi import APIRouter, HTTPException, status
 
+from blog_system_backend.src.api.categories.models import Category
 from blog_system_backend.src.api.categories.repository import CategoryRepositoryDepends
 from blog_system_backend.src.api.categories.schemas import (
     CategoryCreateRequest,
@@ -18,11 +19,11 @@ router = APIRouter(prefix="/categories", tags=["categories"])
 
 
 @lru_cache(maxsize=settings.lru_cache_size)
-@router.get("", response_model=list[CategoryResponse])
+@router.get("", response_model=CategoryPaginationResponse)
 async def get_categories(
     search_params: PaginationSearchParamsDepends,
     repository: CategoryRepositoryDepends,
-    current_user=CurrentUserDepends,
+    current_user: CurrentUserDepends,
 ) -> CategoryPaginationResponse:
     categories = repository.list(search_params)
     count = repository.count(search_params)
@@ -34,7 +35,9 @@ async def get_categories(
 
 @lru_cache(maxsize=settings.lru_cache_size)
 @router.get("/{category_id}", response_model=CategoryResponse)
-async def get_category(category_id: int, repository: CategoryRepositoryDepends, current_user=CurrentUserDepends):
+async def get_category(
+    category_id: int, repository: CategoryRepositoryDepends, current_user: CurrentUserDepends
+) -> Category:
     category = repository.get_by_id(category_id)
     if not category:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Категория с id {category_id} не найдена")
@@ -43,8 +46,8 @@ async def get_category(category_id: int, repository: CategoryRepositoryDepends, 
 
 @router.post("", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 async def create_category(
-    args: CategoryCreateRequest, repository: CategoryRepositoryDepends, current_user=CurrentUserDepends
-):
+    args: CategoryCreateRequest, repository: CategoryRepositoryDepends, current_user: CurrentUserDepends
+) -> Category:
     if current_user.role != UserRole.admin:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Доступно только администраторам")
 
@@ -60,8 +63,8 @@ async def update_category(
     category_id: int,
     args: CategoryUpdateRequest,
     repository: CategoryRepositoryDepends,
-    current_user=CurrentUserDepends,
-):
+    current_user: CurrentUserDepends,
+) -> Category:
     if current_user.role != UserRole.admin:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Доступно только администраторам")
 
@@ -78,7 +81,9 @@ async def update_category(
 
 
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_category(category_id: int, repository: CategoryRepositoryDepends, current_user=CurrentUserDepends):
+async def delete_category(
+    category_id: int, repository: CategoryRepositoryDepends, current_user: CurrentUserDepends
+) -> None:
     if current_user.role != UserRole.admin:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Доступно только администраторам")
 
