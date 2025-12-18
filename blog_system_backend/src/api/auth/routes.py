@@ -15,10 +15,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 )
 async def register(args: UserRequest, repository: UserRepositoryDepends) -> AccessTokenResponse:
     if repository.get_user_by_login(args.login):
-        raise HTTPException(status.HTTP_409_CONFLICT, f"Пользователь с email {args.email} уже существует")
+        raise HTTPException(status.HTTP_409_CONFLICT, f"Пользователь с логином {args.login} уже существует")
 
     if repository.get_user_by_email(args.email):
-        raise HTTPException(status.HTTP_409_CONFLICT, f"Пользователь с логином {args.login} уже существует")
+        raise HTTPException(status.HTTP_409_CONFLICT, f"Пользователь с email {args.email} уже существует")
 
     user = repository.create_user(args)
 
