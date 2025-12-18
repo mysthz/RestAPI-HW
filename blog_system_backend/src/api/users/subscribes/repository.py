@@ -32,21 +32,25 @@ class SubscribeRepository:
         self.session.delete(s)
         self.session.commit()
 
-    def def_followers(
+    def get_followers(
         self, author_id: int, search_params: PaginationSearchParams | None = None
     ) -> tuple[list[Subscribe], int]:
         search_params = search_params or PaginationSearchParams.model_construct()
         query = self.session.query(Subscribe).filter(Subscribe.authorId == author_id)
 
-        return query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
+        entity_query = query.filter(Subscribe.subscriber.login.icontains(search_params.q)) if search_params.q else query
 
-    def def_subscriptions(
+        return entity_query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
+
+    def get_subscriptions(
         self, user_id: int, search_params: PaginationSearchParams | None = None
     ) -> tuple[list[Subscribe], int]:
         search_params = search_params or PaginationSearchParams.model_construct()
         query = self.session.query(Subscribe).filter(Subscribe.subscriberId == user_id)
 
-        return query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
+        entity_query = query.filter(Subscribe.author.login.icontains(search_params.q)) if search_params.q else query
+
+        return entity_query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
 
 
 SubscribeRepositoryDepends = Annotated[SubscribeRepository, Depends()]

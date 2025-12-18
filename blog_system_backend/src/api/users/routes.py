@@ -109,7 +109,7 @@ async def get_user_subscriptions(
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
 
-    subscriptions, count = subscribe_repository.def_subscriptions(user_id, search_params)
+    subscriptions, count = subscribe_repository.get_subscriptions(user_id, search_params)
 
     return SubscribePaginationResponse(
         pagination=PaginationResponse.from_search_params(search_params, total_items=count),
@@ -131,7 +131,7 @@ async def get_user_followers(
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
 
-    followers, count = subscribe_repository.def_followers(user_id, search_params)
+    followers, count = subscribe_repository.get_followers(user_id, search_params)
 
     return SubscribePaginationResponse(
         pagination=PaginationResponse.from_search_params(search_params, total_items=count),
