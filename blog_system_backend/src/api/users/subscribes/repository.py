@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from blog_system_backend.src.api.users.models import User
 from blog_system_backend.src.api.users.subscribes.models import Subscribe
 from blog_system_backend.src.db.deps import SessionDepends
 from blog_system_backend.src.pagination import PaginationSearchParams
@@ -38,7 +39,9 @@ class SubscribeRepository:
         search_params = search_params or PaginationSearchParams.model_construct()
         query = self.session.query(Subscribe).filter(Subscribe.authorId == author_id)
 
-        entity_query = query.filter(Subscribe.subscriber.login.icontains(search_params.q)) if search_params.q else query
+        entity_query = (
+            query.filter(Subscribe.subscriber.has(User.login.icontains(search_params.q))) if search_params.q else query
+        )
 
         return entity_query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
 
@@ -48,7 +51,9 @@ class SubscribeRepository:
         search_params = search_params or PaginationSearchParams.model_construct()
         query = self.session.query(Subscribe).filter(Subscribe.subscriberId == user_id)
 
-        entity_query = query.filter(Subscribe.author.login.icontains(search_params.q)) if search_params.q else query
+        entity_query = (
+            query.filter(Subscribe.author.has(User.login.icontains(search_params.q))) if search_params.q else query
+        )
 
         return entity_query.offset(search_params.offset).limit(search_params.limit).all(), query.count()
 
