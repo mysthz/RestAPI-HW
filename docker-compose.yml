@@ -18,6 +18,24 @@ services:
     networks:
       - blog-system-network
 
+  frontend:
+    build:
+      context: ./blog_system_frontend
+      dockerfile: Dockerfile
+    healthcheck:
+      test: [ "CMD", "wget", "-O", "-", "http://127.0.0.1" ]
+      interval: 1m30s
+      timeout: 5s
+      start_period: 5s
+      start_interval: 2s
+      retries: 5
+    ports:
+      - 80:80
+    restart: unless-stopped
+    networks:
+      - blog-system-network
+
+
 networks:
   blog-system-network:
     name: blog-system

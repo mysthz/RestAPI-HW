@@ -1,0 +1,15 @@
+export const APP_ROUTES = {
+  home: '/',
+  login: '/login',
+  register: '/register',
+  postCreate: '/posts/new',
+  postDetails: (postId: string | number) => `/posts/${postId}`,
+  postEdit: (postId: string | number) => `/posts/${postId}/edit`,
+  favorites: '/favorites',
+  usersSearch: '/users',
+  userProfile: (userId: string | number) => `/users/${userId}`,
+  userPosts: (userId: string | number) => `/users/${userId}/posts`,
+  userSavedPosts: (userId: string | number) => `/users/${userId}/saved-posts`,
+  userSubscribers: (userId: string | number) => `/users/${userId}/subscribers`,
+  userSubscriptions: (userId: string | number) => `/users/${userId}/subscriptions`,
+} as const;
