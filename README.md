@@ -1,3 +1,5 @@
+Видеообзор - https://disk.360.yandex.ru/i/IMs_SyinJkWCJw
+
 Реализованные критерии
 
 **Бэкенд**
