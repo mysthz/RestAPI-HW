@@ -174,12 +174,15 @@ async def get_user_posts(
     if not user:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пользователь с id {user_id} не найден")
 
-    count = len(user.posts)
+    if search_params.q:
+        posts = [post for post in user.posts if (search_params.q in post.title or search_params.q in post.content)]
+    else:
+        posts = user.posts
 
     return PostsPaginationResponse(
-        pagination=PaginationResponse.from_search_params(search_params, total_items=count),
+        pagination=PaginationResponse.from_search_params(search_params, total_items=len(posts)),
         posts=[
             PostResponse.from_orm(post)
-            for post in user.posts[search_params.offset : search_params.limit + search_params.offset]
+            for post in posts[search_params.offset : search_params.limit + search_params.offset]
         ],
     )
