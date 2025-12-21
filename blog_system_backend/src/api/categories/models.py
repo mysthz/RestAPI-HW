@@ -25,5 +25,9 @@ class Category(Base):
 class PostToCategory(Base):
     __tablename__ = "post_to_category"
 
-    categoryId: Mapped[int] = mapped_column(ForeignKey("categories.id"), primary_key=True)
-    postId: Mapped[int] = mapped_column(ForeignKey("posts.id"), primary_key=True)
+    categoryId: Mapped[int] = mapped_column(
+        ForeignKey("categories.id", onupdate="CASCADE", name="fk_post_to_category_category"), primary_key=True
+    )
+    postId: Mapped[int] = mapped_column(
+        ForeignKey("posts.id", onupdate="CASCADE", name="fk_post_to_category_post"), primary_key=True
+    )

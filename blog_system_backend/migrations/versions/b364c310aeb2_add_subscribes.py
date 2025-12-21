@@ -31,10 +31,12 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["authorId"],
             ["users.id"],
+            onupdate="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["subscriberId"],
             ["users.id"],
+            onupdate="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
