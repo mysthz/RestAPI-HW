@@ -2,7 +2,6 @@ from functools import lru_cache
 
 from fastapi import APIRouter, HTTPException, status
 
-from blog_system_backend.src.api.posts.models import Post
 from blog_system_backend.src.api.posts.repository import PostRepositoryDepends
 from blog_system_backend.src.api.posts.schemas import (
     PostCreateRequest,
@@ -36,13 +35,15 @@ async def get_posts(
 
 @lru_cache(maxsize=settings.lru_cache_size)
 @router.get("/{post_id}", response_model=PostResponse)
-async def get_post(post_id: int, post_repository: PostRepositoryDepends, current_user: CurrentUserDepends) -> Post:
+async def get_post(
+    post_id: int, post_repository: PostRepositoryDepends, current_user: CurrentUserDepends
+) -> PostResponse:
     post = post_repository.get_post_by_id(post_id)
 
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"Пост с id {post_id} не найден")
 
-    return post
+    return PostResponse.from_orm(post)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
@@ -50,14 +51,15 @@ async def create_post(
     args: PostCreateRequest,
     post_repository: PostRepositoryDepends,
     current_user: CurrentUserDepends,
-) -> Post:
-    return post_repository.create_post(args, current_user.id)
+) -> PostResponse:
+    post = post_repository.create_post(args, current_user.id)
+    return PostResponse.from_orm(post)
 
 
 @router.put("/{post_id}", response_model=PostResponse)
 async def update_post(
     post_id: int, args: PostUpdateRequest, post_repository: PostRepositoryDepends, current_user: CurrentUserDepends
-) -> Post:
+) -> PostResponse:
     post = post_repository.get_post_by_id(post_id)
 
     if not post:
@@ -69,7 +71,7 @@ async def update_post(
         )
 
     post_repository.update_post(post, args)
-    return post
+    return PostResponse.from_orm(post)
 
 
 @router.delete("/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
